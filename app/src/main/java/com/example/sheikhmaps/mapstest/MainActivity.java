@@ -11,37 +11,21 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     GoogleMap m_map;
     boolean mapReady = false;
 
-    private static final CameraPosition NEWYORK = CameraPosition.builder().
-            target(new LatLng(40.7484, -73.9857))
-            .zoom(17)
-            .bearing(0)
-            .tilt(45)
-            .build();
+    MarkerOptions renton;
+    MarkerOptions kirkland;
+    MarkerOptions everett;
 
     private static final CameraPosition SEATTLE = CameraPosition.builder().
             target(new LatLng(47.6204, -122.3491))
-            .zoom(17)
+            .zoom(10)
             .bearing(0)
-            .tilt(45)
-            .build();
-
-    private static final CameraPosition DUBLIN = CameraPosition.builder().
-            target(new LatLng(53.3478, -6.2597))
-            .zoom(17)
-            .bearing(90)
-            .tilt(45)
-            .build();
-
-    private static final CameraPosition TOKYO = CameraPosition.builder().
-            target(new LatLng(35.6895, -139.6917))
-            .zoom(17)
-            .bearing(90)
             .tilt(45)
             .build();
 
@@ -50,35 +34,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnMap = (Button) findViewById(R.id.btnSeattle);
-        btnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mapReady) {
-                    flyTo(SEATTLE);
-                }
-            }
-        });
+        renton = new MarkerOptions()
+                .position(new LatLng(47.489805, -122.120502))
+                .title("Renton");
 
-        Button btnSatellite = (Button) findViewById(R.id.btnTokyo);
-        btnSatellite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mapReady) {
-                    flyTo(TOKYO);
-                }
-            }
-        });
+        kirkland = new MarkerOptions()
+                .position(new LatLng(47.7301986, -122.1768858))
+                .title("Kirkland");
 
-        Button btnHybrid = (Button) findViewById(R.id.btnDublin);
-        btnHybrid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mapReady) {
-                    flyTo(DUBLIN);
-                }
-            }
-        });
+        everett = new MarkerOptions()
+                .position(new LatLng(47.978478, -122.202001))
+                .title("Everett");
 
         MapFragment mapFragment =(MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -89,12 +55,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mapReady = true;
         m_map = googleMap;
-        m_map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        flyTo(NEWYORK);
+        m_map.addMarker(renton);
+        m_map.addMarker(kirkland);
+        m_map.addMarker(everett);
+        flyTo(SEATTLE);
     }
 
     private void flyTo(CameraPosition target) {
 
-        m_map.animateCamera(CameraUpdateFactory.newCameraPosition(target), 5000, null);
+        m_map.moveCamera(CameraUpdateFactory.newCameraPosition(target));
     }
 }
