@@ -17,37 +17,65 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap m_map;
     boolean mapReady = false;
 
+    private static final CameraPosition NEWYORK = CameraPosition.builder().
+            target(new LatLng(40.7484, -73.9857))
+            .zoom(17)
+            .bearing(0)
+            .tilt(45)
+            .build();
+
+    private static final CameraPosition SEATTLE = CameraPosition.builder().
+            target(new LatLng(47.6204, -122.3491))
+            .zoom(17)
+            .bearing(0)
+            .tilt(45)
+            .build();
+
+    private static final CameraPosition DUBLIN = CameraPosition.builder().
+            target(new LatLng(53.3478, -6.2597))
+            .zoom(17)
+            .bearing(90)
+            .tilt(45)
+            .build();
+
+    private static final CameraPosition TOKYO = CameraPosition.builder().
+            target(new LatLng(35.6895, -139.6917))
+            .zoom(17)
+            .bearing(90)
+            .tilt(45)
+            .build();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnMap = (Button) findViewById(R.id.btnMap);
+        Button btnMap = (Button) findViewById(R.id.btnSeattle);
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mapReady) {
-                    m_map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    flyTo(SEATTLE);
                 }
             }
         });
 
-        Button btnSatellite = (Button) findViewById(R.id.btnSatellite);
+        Button btnSatellite = (Button) findViewById(R.id.btnTokyo);
         btnSatellite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mapReady) {
-                    m_map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    flyTo(TOKYO);
                 }
             }
         });
 
-        Button btnHybrid = (Button) findViewById(R.id.btnHybrid);
+        Button btnHybrid = (Button) findViewById(R.id.btnDublin);
         btnHybrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mapReady) {
-                    m_map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    flyTo(DUBLIN);
                 }
             }
         });
@@ -61,9 +89,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mapReady = true;
         m_map = googleMap;
-        LatLng newYork = new LatLng(40.7484, -73.9857);
-        CameraPosition target = CameraPosition.builder().target(newYork).zoom(14).build();
-        m_map.moveCamera(CameraUpdateFactory.newCameraPosition(target));
+        m_map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        flyTo(NEWYORK);
+    }
 
+    private void flyTo(CameraPosition target) {
+
+        m_map.animateCamera(CameraUpdateFactory.newCameraPosition(target), 5000, null);
     }
 }
