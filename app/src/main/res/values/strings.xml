@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MapsTest</string>
+
+    <string name="button_radius">Radius</string>
+    <string name="button_gradient">Gradient</string>
+    <string name="button_opacity">Opacity</string>
 </resources>
