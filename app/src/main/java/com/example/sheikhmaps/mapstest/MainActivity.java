@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Alternative radius for convolution
      */
-    private static final int ALT_HEATMAP_RADIUS = 100;
+    private static final int ALT_HEATMAP_RADIUS = 50;
 
     /**
      * Alternative opacity of heatmap overlay
@@ -102,11 +102,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void changeRadius(View view) {
         if (mDefaultRadius) {
-            mProvider.setRadius(ALT_HEATMAP_RADIUS);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                heatmapTileProviderArrayList.get(j).setRadius(ALT_HEATMAP_RADIUS);
+                tileOverlayArrayList.get(j).clearTileCache();
+            }
+
         } else {
-            mProvider.setRadius(HeatmapTileProvider.DEFAULT_RADIUS);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                heatmapTileProviderArrayList.get(j).setRadius(HeatmapTileProvider.DEFAULT_RADIUS);
+                tileOverlayArrayList.get(j).clearTileCache();
+            }
         }
-        mOverlay.clearTileCache();
         mDefaultRadius = !mDefaultRadius;
     }
 
@@ -116,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 float[] ALT_HEATMAP_GRADIENT_START_POINTS = {0f, 0f, 0f, 0f, 0f};
                 Gradient ALT_HEATMAP_GRADIENT;
                 float min, max;
-                min = 5f;
+                min = 9f;
                 max = min + (float)(Math.random() * (10 - min));
                 int step = 5;
                 for (int i = 0; i<step; i++) {
@@ -144,9 +150,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void changeOpacity(View view) {
         if (mDefaultOpacity) {
-            mProvider.setOpacity(ALT_HEATMAP_OPACITY);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                heatmapTileProviderArrayList.get(j).setOpacity(ALT_HEATMAP_OPACITY);
+                tileOverlayArrayList.get(j).clearTileCache();
+            }
+
         } else {
-            mProvider.setOpacity(HeatmapTileProvider.DEFAULT_OPACITY);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                heatmapTileProviderArrayList.get(j).setOpacity(HeatmapTileProvider.DEFAULT_OPACITY);
+                tileOverlayArrayList.get(j).clearTileCache();
+            }
         }
         mOverlay.clearTileCache();
         mDefaultOpacity = !mDefaultOpacity;
