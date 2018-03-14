@@ -36,10 +36,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap m_map;
     boolean mapReady = false;
 
-//    MarkerOptions renton;
-//    MarkerOptions kirkland;
-//    MarkerOptions everett;
-
     /**
      * Alternative radius for convolution
      */
@@ -76,30 +72,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean mDefaultRadius = true;
     private boolean mDefaultOpacity = true;
 
-//    private static final CameraPosition SEATTLE = CameraPosition.builder().
-//            target(new LatLng(47.6204, -122.3491))
-//            .zoom(10)
-//            .bearing(0)
-//            .tilt(45)
-//            .build();
+
     private static  final LatLng RAJASTHAN = new LatLng(26.922070, 75.778885);
+
+    ArrayList<HeatmapTileProvider> heatmapTileProviderArrayList = new ArrayList<HeatmapTileProvider>();
+    ArrayList<TileOverlay> tileOverlayArrayList = new ArrayList<TileOverlay>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        renton = new MarkerOptions()
-//                .position(new LatLng(47.489805, -122.120502))
-//                .title("Renton");
-//
-//        kirkland = new MarkerOptions()
-//                .position(new LatLng(47.7301986, -122.1768858))
-//                .title("Kirkland");
-//
-//        everett = new MarkerOptions()
-//                .position(new LatLng(47.978478, -122.202001))
-//                .title("Everett");
 
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
@@ -109,9 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mapReady = true;
         m_map = googleMap;
-//        m_map.addMarker(renton);
-//        m_map.addMarker(kirkland);
-//        m_map.addMarker(everett);
+
         flyTo(RAJASTHAN);
         addHeatMap();
     }
@@ -132,24 +112,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void changeGradient(View view) {
         if (mDefaultGradient) {
-            float[] ALT_HEATMAP_GRADIENT_START_POINTS = {0f, 0f, 0f, 0f, 0f};
-            Gradient ALT_HEATMAP_GRADIENT;
-            float min, max;
-            min = 5f;
-            max = min + (float)(Math.random() * (10 - min));
-            int step = 5;
-            for (int i = 0; i<step; i++) {
-                ALT_HEATMAP_GRADIENT_START_POINTS[i] = ((max - min) / (float)step) * (i+1);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                float[] ALT_HEATMAP_GRADIENT_START_POINTS = {0f, 0f, 0f, 0f, 0f};
+                Gradient ALT_HEATMAP_GRADIENT;
+                float min, max;
+                min = 5f;
+                max = min + (float)(Math.random() * (10 - min));
+                int step = 5;
+                for (int i = 0; i<step; i++) {
+                    ALT_HEATMAP_GRADIENT_START_POINTS[i] = ((max - min) / (float)step) * (i+1);
+                }
+
+                ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
+                        ALT_HEATMAP_GRADIENT_START_POINTS);
+
+                heatmapTileProviderArrayList.get(j).setGradient(ALT_HEATMAP_GRADIENT);
+                tileOverlayArrayList.get(j).clearTileCache();
+
             }
 
-            ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
-                    ALT_HEATMAP_GRADIENT_START_POINTS);
-
-            mProvider.setGradient(ALT_HEATMAP_GRADIENT);
         } else {
-            mProvider.setGradient(HeatmapTileProvider.DEFAULT_GRADIENT);
+            for (int j=0; j<heatmapTileProviderArrayList.size(); j++) {
+                heatmapTileProviderArrayList.get(j).setGradient(HeatmapTileProvider.DEFAULT_GRADIENT);
+                tileOverlayArrayList.get(j).clearTileCache();
+            }
+            //mProvider.setGradient(HeatmapTileProvider.DEFAULT_GRADIENT);
         }
-        mOverlay.clearTileCache();
+
         mDefaultGradient = !mDefaultGradient;
     }
 
@@ -164,21 +153,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addHeatMap() {
-        List<LatLng> list = null;
+
+        ArrayList<LatLng> list = new ArrayList<LatLng>();
 
         // Get the data: latitude/longitude positions of districts.
         try {
             list = readItems(R.raw.districs);
         } catch (JSONException e) {
-            Toast.makeText(this, "Problem reading list of locations.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Problem reading list of districts.", Toast.LENGTH_LONG).show();
         }
 
-        // Create a heat map tile provider, passing it the latlngs of the districts.
-        mProvider = new HeatmapTileProvider.Builder()
-                .data(list)
-                .build();
-        // Add a tile overlay to the map, using the heat map tile provider.
-        mOverlay = m_map.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+        if (list != null){
+            for (int i=0; i<list.size(); i++) {
+
+                ArrayList<LatLng> singleList = new ArrayList<LatLng>();
+                singleList.add(list.get(i));
+                // Create a heat map tile provider, passing it the latlngs of the districts.
+                mProvider = new HeatmapTileProvider.Builder()
+                        .data(singleList)
+                        .build();
+                heatmapTileProviderArrayList.add(mProvider);
+                // Add a tile overlay to the map, using the heat map tile provider.
+                mOverlay = m_map.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider)) ;
+                tileOverlayArrayList.add(mOverlay);
+            }
+        } else {Toast.makeText(this, "Problem reading list",Toast.LENGTH_LONG).show();}
+
+//        // Create a heat map tile provider, passing it the latlngs of the districts.
+//        mProvider = new HeatmapTileProvider.Builder()
+//                .data(list)
+//                .build();
+//        // Add a tile overlay to the map, using the heat map tile provider.
+//        mOverlay = m_map.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
     }
 
     private ArrayList<LatLng> readItems(int resource) throws JSONException {
