@@ -3,6 +3,7 @@ package com.example.sheikhmaps.mapstest;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap m_map;
     boolean mapReady = false;
 
+    private List<LatLng> list = null;
+
 //    MarkerOptions renton;
 //    MarkerOptions kirkland;
 //    MarkerOptions everett;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Alternative radius for convolution
      */
-    private static final int ALT_HEATMAP_RADIUS = 100;
+    private static final int ALT_HEATMAP_RADIUS = 50;
 
     /**
      * Alternative opacity of heatmap overlay
@@ -62,12 +65,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Color.rgb(255, 0, 0)
     };
 
-//    public float[] ALT_HEATMAP_GRADIENT_START_POINTS; = {
-//            0.0f, 0.10f, 0.20f, 0.60f, 1.0f
-//    };
+    public float[] ALT_HEATMAP_GRADIENT_START_POINTS = {
+            0.0f, 0.10f, 0.20f, 0.60f, 1.0f
+    };
 
-//    public  Gradient ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
-//            ALT_HEATMAP_GRADIENT_START_POINTS);
+    public  Gradient ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
+            ALT_HEATMAP_GRADIENT_START_POINTS);
 
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
@@ -131,21 +134,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void changeGradient(View view) {
+//        ArrayList<LatLng> points = new ArrayList<LatLng>();
         if (mDefaultGradient) {
-            float[] ALT_HEATMAP_GRADIENT_START_POINTS = {0f, 0f, 0f, 0f, 0f};
-            Gradient ALT_HEATMAP_GRADIENT;
-            float min, max;
-            min = 5f;
-            max = min + (float)(Math.random() * (10 - min));
-            int step = 5;
-            for (int i = 0; i<step; i++) {
-                ALT_HEATMAP_GRADIENT_START_POINTS[i] = ((max - min) / (float)step) * (i+1);
-            }
+//            for (int j=0; j<list.size(); j++) {
+//                dataAtLatlng(points, list.get(j),(int) (Math.random() * 10));
+//            }
+//
+//            mProvider.setData(points);
+
+//            float[] ALT_HEATMAP_GRADIENT_START_POINTS = {0f, 0f, 0f, 0f, 0f};
+//            Gradient ALT_HEATMAP_GRADIENT;
+//            float min, max;
+//            min = 5f;
+//            max = min + (float)(Math.random() * (10 - min));
+//            int step = 5;
+//            for (int i = 0; i<step; i++) {
+//                ALT_HEATMAP_GRADIENT_START_POINTS[i] = ((max - min) / (float)step) * (i+1);
+//            }
 
             ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
                     ALT_HEATMAP_GRADIENT_START_POINTS);
 
             mProvider.setGradient(ALT_HEATMAP_GRADIENT);
+
+//            Log.i("list",points.toString());
         } else {
             mProvider.setGradient(HeatmapTileProvider.DEFAULT_GRADIENT);
         }
@@ -163,8 +175,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDefaultOpacity = !mDefaultOpacity;
     }
 
+    public void changeData(View view) {
+        ArrayList<LatLng> points = new ArrayList<LatLng>();
+
+        for (int j=0; j<list.size(); j++) {
+            dataAtLatlng(points, list.get(j),(int) (Math.random() * 10));
+        }
+
+        mProvider.setData(points);
+        mOverlay.clearTileCache();
+    }
+
     private void addHeatMap() {
-        List<LatLng> list = null;
+//        List<LatLng> list = null;
 
         // Get the data: latitude/longitude positions of districts.
         try {
@@ -193,5 +216,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             list.add(new LatLng(lat, lng));
         }
         return list;
+    }
+
+    private void dataAtLatlng(ArrayList<LatLng> listOfDataPoints, LatLng latlng, int count) {
+         for (int i=0; i<count; i++) {
+             double lat = latlng.latitude;
+             double lng = latlng.longitude;
+             if (Math.random()>0.5) {
+                 lat += Math.random() / 4;
+             } else {
+                 lat -= Math.random() / 4;
+             }
+
+             if (Math.random()>0.5) {
+                 lng += Math.random() / 4;
+             } else {
+                 lng -= Math.random() / 4;
+             }
+             listOfDataPoints.add(new LatLng(lat, lng));
+
+         }
     }
 }
