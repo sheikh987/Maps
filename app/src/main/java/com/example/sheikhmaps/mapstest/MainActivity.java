@@ -15,6 +15,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -51,6 +52,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Button button;
 
     private static  final LatLng RAJASTHAN = new LatLng(26.922070, 75.778885);
+
+//    private LatLngBounds RAJASTHAN_BOUNDS = new LatLngBounds(new LatLng(23.086834, 69.482825),
+//            new LatLng(30.189796, 78.293860));
+
+    private LatLngBounds RAJASTHAN_BOUNDS = new LatLngBounds(new LatLng(25.688095, 72.163489),
+            new LatLng(26.826473, 75.140540));
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,12 +139,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        m_map.addMarker(renton);
 //        m_map.addMarker(kirkland);
 //        m_map.addMarker(everett);
-        flyTo(RAJASTHAN);
+        flyTo(RAJASTHAN_BOUNDS);
         createPolygon();
     }
 
-    private void flyTo(LatLng target) {
-        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 5));
+    private void flyTo(LatLngBounds target) {
+        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(target.getCenter(), 5));
+        m_map.setLatLngBoundsForCameraTarget(RAJASTHAN_BOUNDS);
+        m_map.setMinZoomPreference(6.0f);
     }
 
 
@@ -148,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             for (int i=0; i<listOfDistricts.size(); i++) {
                 list = readItems(listOfDistricts.get(i));
-                Polygon polygon =m_map.addPolygon(new PolygonOptions().addAll(list)
+                Polygon polygon = m_map.addPolygon(new PolygonOptions().addAll(list)
                         .strokeColor(Color.TRANSPARENT)
                         .fillColor(listOfColors.get(i)));
 
@@ -160,6 +169,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+//        try {
+//            m_map.addPolygon(new PolygonOptions().addAll(readItems(R.raw.pakistan))
+//                    .strokeColor(Color.TRANSPARENT)
+//            .fillColor(Color.BLACK));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
 //        for (int i=0; i<list.size(); i++) {
