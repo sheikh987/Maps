@@ -5,35 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/button_radius"
-            android:onClick="changeRadius"
-            />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/button_gradient"
-            android:onClick="changeGradient" />
-
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/button_opacity"
-            android:onClick="changeOpacity" />
-
-    </LinearLayout>
 
     <fragment
         android:id="@+id/map"
@@ -43,8 +15,9 @@
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
     <Button
+        android:id="@+id/changeData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_changeData"
-        android:onClick="changeData"/>
+        />
 </LinearLayout>

@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -40,29 +41,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean mapReady = false;
     ArrayList<Integer> listOfDistricts = new ArrayList<Integer>();
     ArrayList<Integer> listOfColors = new ArrayList<Integer>();
-    //    private static final CameraPosition SEATTLE = CameraPosition.builder().
-//            target(new LatLng(47.6204, -122.3491))
-//            .zoom(10)
-//            .bearing(0)
-//            .tilt(45)
-//            .build();
+
+    String[] arrayOfDistricts = {"jaipur", "udaipur", "kota", "ajmer", "jodhpur", "bikaner" ,"tonk",
+            "jaisalmer", "bhilwara", "bharatpur", "alwar", "barmer"};
+
+    HashMap<String ,Integer> values = new HashMap<String ,Integer>();
+    HashMap<String ,Polygon> mapOfPolygons = new HashMap<String, Polygon>();
+
+    Button button;
+
     private static  final LatLng RAJASTHAN = new LatLng(26.922070, 75.778885);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        renton = new MarkerOptions()
-//                .position(new LatLng(47.489805, -122.120502))
-//                .title("Renton");
-//
-//        kirkland = new MarkerOptions()
-//                .position(new LatLng(47.7301986, -122.1768858))
-//                .title("Kirkland");
-//
-//        everett = new MarkerOptions()
-//                .position(new LatLng(47.978478, -122.202001))
-//                .title("Everett");
 
         listOfDistricts.add(R.raw.jaipur);
         listOfDistricts.add(R.raw.udaipur);
@@ -90,7 +82,44 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         listOfColors.add(Color.GRAY);
         listOfColors.add(Color.RED);
 
+        button = (Button) findViewById(R.id.changeData);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                for (int i=0; i<arrayOfDistricts.length; i++) {
+                    values.put(arrayOfDistricts[i], (int)(Math.random() * 100));
+                }
+
+                for (HashMap.Entry<String ,Integer> entry : values.entrySet()) {
+                    Integer x = entry.getValue();
+                    if (x>=0 && x<=20) {
+                        Polygon polygon = mapOfPolygons.get(entry.getKey());
+                        polygon.setFillColor(Color.GRAY);
+
+                    } else if ((x>20) && (x<=40)) {
+                        Polygon polygon = mapOfPolygons.get(entry.getKey());
+                        polygon.setFillColor(Color.YELLOW);
+
+                    } else if ((x>40) && (x<=60)) {
+                        Polygon polygon = mapOfPolygons.get(entry.getKey());
+                        polygon.setFillColor(Color.GREEN);
+
+                    } else if ((x>60) && (x<=80)) {
+                        Polygon polygon = mapOfPolygons.get(entry.getKey());
+                        polygon.setFillColor(Color.BLUE);
+
+                    } else if ((x>80) && (x<=100)) {
+                        Polygon polygon = mapOfPolygons.get(entry.getKey());
+                        polygon.setFillColor(Color.RED);
+
+                    }
+                }
+
+
+
+            }
+        });
 
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
@@ -111,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 5));
     }
 
+
+
     private void createPolygon(){
         ArrayList<LatLng> list = new ArrayList<LatLng>();
         PolygonOptions polygonOptions = null;
@@ -120,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Polygon polygon =m_map.addPolygon(new PolygonOptions().addAll(list)
                         .strokeColor(Color.TRANSPARENT)
                         .fillColor(listOfColors.get(i)));
+
+                mapOfPolygons.put(arrayOfDistricts[i], polygon);
 
             }
 
