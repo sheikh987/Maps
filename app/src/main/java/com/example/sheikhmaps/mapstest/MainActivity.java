@@ -136,10 +136,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mapReady = true;
         m_map = googleMap;
-//        m_map.addMarker(renton);
-//        m_map.addMarker(kirkland);
-//        m_map.addMarker(everett);
+
         flyTo(RAJASTHAN_BOUNDS);
+
         createPolygon();
     }
 
@@ -170,21 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
-//        try {
-//            m_map.addPolygon(new PolygonOptions().addAll(readItems(R.raw.pakistan))
-//                    .strokeColor(Color.TRANSPARENT)
-//            .fillColor(Color.BLACK));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
 
-
-//        for (int i=0; i<list.size(); i++) {
-//            Log.i("list(i)", list.get(i).toString());
-//            polygonOptions = new PolygonOptions().add(list.get(i));
-//        }
-//
-//        Polygon polygon = m_map.addPolygon(polygonOptions.strokeColor(Color.RED));
     }
 
     private ArrayList<LatLng> readItems(int resource) throws JSONException {
